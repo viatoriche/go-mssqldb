@@ -88,9 +88,9 @@ func (c *Conn) CheckNamedValue(nv *driver.NamedValue) error {
 
 		// don't allow pointer to a pointer, only pointer to a value can be handled
 		// correctly
-		if pointed_value.Kind() == reflect.Ptr {
-			return errors.New("destination is a pointer to a pointer")
-		}
+		//if pointed_value.Kind() == reflect.Ptr {
+		//	return errors.New("destination is a pointer to a pointer")
+		//}
 
 		// Unwrap the Out value and check the inner value.
 		val := pointed_value.Interface()
@@ -184,6 +184,15 @@ func (s *Stmt) makeParamExtra(val driver.Value) (res param, err error) {
 			return
 		}
 		res.ti.Size = len(res.buffer)
+	case *time.Time:
+		res.ti.TypeId = typeDateTimeN
+		if val != nil {
+			res.buffer = encodeDate(*val)
+			res.ti.Size = len(res.buffer)
+		} else {
+			res.buffer = []byte{}
+			res.ti.Size = 8
+		}
 
 	default:
 		err = fmt.Errorf("mssql: unknown type for %T", val)
