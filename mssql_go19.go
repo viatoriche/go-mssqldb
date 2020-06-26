@@ -184,6 +184,11 @@ func (s *Stmt) makeParamExtra(val driver.Value) (res param, err error) {
 			return
 		}
 		res.ti.Size = len(res.buffer)
+	case NullDateTime1:
+		t := time.Time(val.Time)
+		res.ti.TypeId = typeDateTimeN
+		res.buffer = encodeDateTime(t)
+		res.ti.Size = len(res.buffer)
 
 	default:
 		err = fmt.Errorf("mssql: unknown type for %T", val)
